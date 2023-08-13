@@ -4,16 +4,16 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const db = require('./app/config/db');
+const db = require('./api/config/db');
 
 //connect mongoDB
 db.connect();
 
 mongoose.Promise = global.Promise;
 
-const productRoutes = require('./app/routes/products');
-const orderRoutes = require('./app/routes/orders');
-const userRoutes = require('./app/routes/user');
+const productRoutes = require('./api/routes/products');
+const orderRoutes = require('./api/routes/orders');
+const userRoutes = require('./api/routes/user');
 
 app.use(morgan('dev'));
 //CORS

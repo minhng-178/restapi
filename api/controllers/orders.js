@@ -1,12 +1,9 @@
-const express = require('express');
 const mongoose = require('mongoose');
-const router = express.Router();
 
 const Order = require('../models/order');
 const Product = require('../models/product');
-const order = require('../models/order');
 
-router.get('/', (req, res, next) => {
+exports.order_get_all = (req, res, next) => {
   Order.find()
     .select('-__v')
     .populate('product', 'name')
@@ -32,9 +29,9 @@ router.get('/', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
+};
 
-router.post('/', (req, res, next) => {
+exports.order_create_order = (req, res, next) => {
   Product.findById(req.body.productId)
     .then(product => {
       if (!product)
@@ -65,12 +62,12 @@ router.post('/', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
+};
 
-router.get('/:orderId', (req, res, next) => {
+exports.orders_get_order = (req, res, next) => {
   Order.findById(req.params.orderId)
-    .exec()
     .populate('product')
+    .exec()
     .then(order => {
       if (!order) return res.status(404).json({ message: 'Order not found!' });
       res.status(200).json({
@@ -86,9 +83,9 @@ router.get('/:orderId', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
+};
 
-router.delete('/:orderId', (req, res, next) => {
+exports.order_delete_order = (req, res, next) => {
   const id = req.params.orderId;
   Order.deleteOne({ _id: id })
     .exec()
@@ -107,6 +104,4 @@ router.delete('/:orderId', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
-
-module.exports = router;
+};

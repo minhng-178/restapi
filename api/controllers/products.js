@@ -1,31 +1,7 @@
-const express = require('express');
-const router = express.Router();
 const mongoose = require('mongoose');
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-  filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname);
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png')
-    cb(null, true);
-  else cb(null, false);
-};
-
-const upload = multer({
-  dest: './uploads/',
-  limits: {
-    fileSize: 1024 * 1024 * 5,
-  },
-  fileFilter: fileFilter,
-});
-
 const Product = require('../models/product');
 
-router.get('/', (req, res, next) => {
+exports.product_get_all = (req, res, next) => {
   Product.find()
     .select('-__v')
     .exec()
@@ -52,9 +28,9 @@ router.get('/', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
+};
 
-router.post('/', upload.single('productImage'), (req, res, next) => {
+exports.product_create_product = (req, res, next) => {
   console.log(req.file);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
@@ -87,9 +63,9 @@ router.post('/', upload.single('productImage'), (req, res, next) => {
         error: err,
       });
     });
-});
+};
 
-router.get('/:productId', (req, res, next) => {
+exports.product_get_product = (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
     .select('-__v')
@@ -110,9 +86,9 @@ router.get('/:productId', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
+};
 
-router.patch('/:id', (req, res, next) => {
+exports.product_edit_product = (req, res, next) => {
   const id = req.params.id;
   const updateOps = {};
   for (const ops of req.body) {
@@ -130,9 +106,9 @@ router.patch('/:id', (req, res, next) => {
       })
     )
     .catch(err => res.status(500).json({ error: err }));
-});
+};
 
-router.delete('/:productId', (req, res, next) => {
+exports.product_delete_product = (req, res, next) => {
   const id = req.params.productId;
   Product.deleteOne({ _id: id })
     .exec()
@@ -150,6 +126,4 @@ router.delete('/:productId', (req, res, next) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
-});
-
-module.exports = router;
+};
